@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">App2</string>
+    <string name="upRV">上面的左右滚动</string>
+    <string name="downRV">下面的上下滚动</string>
+</resources>

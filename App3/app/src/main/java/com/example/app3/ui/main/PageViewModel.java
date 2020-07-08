@@ -12,7 +12,7 @@ public class PageViewModel extends ViewModel {
 	private LiveData<String> mText = Transformations.map(mIndex, new Function<Integer, String>() {
 		@Override
 		public String apply(Integer input) {
-			return "Hello world from section: " + input;
+			return "第三页的click逻辑和touch逻辑还没有处理，除非自己非常精细，不然大概率触发touch（虽然touch的效果比click多^_^）见谅";
 		}
 	});
 

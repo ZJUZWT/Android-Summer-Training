@@ -65,8 +65,8 @@ public class TabFragment1 extends Fragment {
 			Log.d(TAG, "onViewCreated: "+ temp);
 			lottieAnimationView.setProgress(temp);
 		}
-		lottieAnimationView.setProgress(0.5f);
-		lottieAnimationView.pauseAnimation();
+//		lottieAnimationView.setProgress(0.5f);
+//		lottieAnimationView.pauseAnimation();
 		Log.d(TAG, "onViewCreated: "+ lottieAnimationView.getProgress());
 
 		lottieAnimationView.addAnimatorUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
@@ -118,17 +118,17 @@ public class TabFragment1 extends Fragment {
 				if ( isChecked ) {
 					lottieAnimationView.pauseAnimation();
 //					lottieAnimationView.cancelAnimation();
-//					lottieAnimationView.setProgress(seekBar.getProgress()*1.0f/seekBar.getMax());
+					lottieAnimationView.setProgress(seekBar.getProgress()*1.0f/seekBar.getMax());
 //					valueAnimator.pause();
 					seekBar.setEnabled(true);
-					editText.setEnabled(true);
+//					editText.setEnabled(true);
 				} else {
 //					lottieAnimationView.playAnimation();
 					lottieAnimationView.resumeAnimation();
 //					valueAnimator.resume();
 //					valueAnimator.start();
 					seekBar.setEnabled(false);
-					editText.setEnabled(false);
+//					editText.setEnabled(false);
 				}
 			}
 		});

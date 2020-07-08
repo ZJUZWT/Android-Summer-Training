@@ -53,7 +53,8 @@ public class TabFragment1 extends Fragment {
 		super.onViewCreated(view, savedInstanceState);
 
 		//对lottie实施监听
-		lottieAnimationView = getActivity().findViewById(R.id.Tab1_Lottie);
+//		lottieAnimationView = getActivity().findViewById(R.id.Tab1_Lottie);
+		lottieAnimationView = view.findViewById(R.id.Tab1_Lottie);
 		lottieAnimationView.useHardwareAcceleration();
 //		lottieAnimationView.pauseAnimation();
 		lottieAnimationView.setRepeatMode(LottieDrawable.REVERSE);
@@ -61,8 +62,11 @@ public class TabFragment1 extends Fragment {
 			lottieAnimationView.setProgress(0.5f);
 		else {
 			Float temp = seekBar.getProgress() * 1.0f / seekBar.getMax();
+			Log.d(TAG, "onViewCreated: "+ temp);
 			lottieAnimationView.setProgress(temp);
 		}
+		Log.d(TAG, "onViewCreated: "+ lottieAnimationView.getProgress());
+
 		lottieAnimationView.addAnimatorUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
 			@Override
 			public void onAnimationUpdate(ValueAnimator animation) {
@@ -77,7 +81,8 @@ public class TabFragment1 extends Fragment {
 //		lottieAnimationView.playAnimation();
 
 		//对seekBar实施监听
-		seekBar = getActivity().findViewById(R.id.Tab1_seekbar);
+//		seekBar = getActivity().findViewById(R.id.Tab1_seekbar);
+		seekBar = view.findViewById(R.id.Tab1_seekbar);
 		seekBar.setEnabled(false);
 		seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
 			@Override
@@ -97,11 +102,13 @@ public class TabFragment1 extends Fragment {
 		});
 
 		//对数字实施监听
-		editText = getActivity().findViewById(R.id.Tab1_number);
+//		editText = getActivity().findViewById(R.id.Tab1_number);
+		editText = view.findViewById(R.id.Tab1_number);
 		editText.setEnabled(false);
 
 		//对switch监听
-		aSwitch = getActivity().findViewById(R.id.Tab1_switch);
+//		aSwitch = getActivity().findViewById(R.id.Tab1_switch);
+		aSwitch = view.findViewById(R.id.Tab1_switch);
 		aSwitch.setEnabled(true);
 		aSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
 			@Override

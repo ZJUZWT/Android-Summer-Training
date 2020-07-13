@@ -4,12 +4,16 @@
     <color name="colorPrimaryDark">#3700B3</color>
     <color name="colorAccent">#03DAC5</color>
 
-    <color name="colorLightThemeBlue">#11C2EE</color>
+<!--    <color name="colorLightThemeBlue">#11C2EE</color>-->
+    <color name="colorLightThemeBlue">#D5912B</color>
 
     <color name="MainPageTitleBar">#00000000</color>
 
     <color name="WaveButtonNotPress">#808080</color>
-    <color name="WaveButtonPress">#1A94E6</color>
-    <color name="WaveButtonWave">#881A94E6</color>
+<!--    <color name="WaveButtonPress">#D5912B</color>-->
+<!--    <color name="WaveButtonWave">#88D5912B</color>-->
+
+        <color name="WaveButtonPress">#1A94E6</color>
+        <color name="WaveButtonWave">#881A94E6</color>
 
 </resources>

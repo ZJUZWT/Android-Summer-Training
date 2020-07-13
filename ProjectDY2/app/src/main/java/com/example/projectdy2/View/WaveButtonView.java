@@ -51,6 +51,7 @@ public class WaveButtonView extends View {
 
 	private void init() {
 		setBackgroundColor(0x00000000);
+//		setBackgroundColor(0xFF000000);
 
 		textPaint.setAntiAlias(true);
 		textPaint.setTextSize(50);

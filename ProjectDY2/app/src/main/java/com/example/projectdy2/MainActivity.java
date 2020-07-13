@@ -7,18 +7,19 @@ import androidx.fragment.app.FragmentTransaction;
 
 import android.os.Bundle;
 import android.os.Handler;
-import android.util.Log;
 import android.view.View;
+import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import com.example.projectdy2.Fragment.FragmentAround;
 import com.example.projectdy2.Fragment.FragmentChat;
-import com.example.projectdy2.Fragment.FragmentMainPage;
+import com.example.projectdy2.FragmentMainPage.FragmentMainPage;
 import com.example.projectdy2.Fragment.FragmentMy;
+import com.example.projectdy2.InterfaceForInteract.BringFrontWaveButton;
 import com.example.projectdy2.Util.StatusBarUtils;
 import com.example.projectdy2.View.WaveButtonView;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements BringFrontWaveButton {
 
 	private boolean isQuit = false;
 
@@ -40,6 +41,7 @@ public class MainActivity extends AppCompatActivity {
 	private Fragment fragmentChat = new FragmentChat();
 	private Fragment fragmentMy = new FragmentMy();
 
+	private View linearLayout;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -120,6 +122,8 @@ public class MainActivity extends AppCompatActivity {
 			}
 		};
 		waveButtonHandler.postDelayed(temp,10);
+
+		linearLayout = findViewById(R.id.linearLayout);
 	}
 
 	private void fragment_replace(Fragment fragment) {
@@ -161,5 +165,14 @@ public class MainActivity extends AppCompatActivity {
 			}).start();
 		} else
 			finish();
+	}
+
+	@Override
+	public void bringAllUp() {
+//		waveButtonView1.bringToFront();
+//		waveButtonView2.bringToFront();
+//		waveButtonView4.bringToFront();
+//		waveButtonView5.bringToFront();
+		linearLayout.bringToFront();
 	}
 }

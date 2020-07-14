@@ -1,20 +1,18 @@
-package com.example.projectdy2.FragmentMainPage;
+package com.example.projectdy2.FragmentMainPage.TabLayoutManager;
 
 import android.content.Context;
 
 import com.example.projectdy2.FragmentMainPage.FollowPage;
 import com.example.projectdy2.FragmentMainPage.RecommendPage;
-import com.example.projectdy2.R;
 
 import androidx.annotation.Nullable;
-import androidx.annotation.StringRes;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentPagerAdapter;
 
 public class SectionsPagerAdapter extends FragmentPagerAdapter {
 
-	private static final String[] TAB_TITLES = new String[]{"关注","推荐"};
+	private static final String[] TAB_TITLES = new String[]{"喜爱","推荐"};
 	private final Context mContext;
 
 	public SectionsPagerAdapter(Context context, FragmentManager fm) {

@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="ShineButtonView">
+        <attr name="pressedColor" format="integer"/>
+<!--        <attr name="isPressed" format="boolean"/>-->
+<!--        <attr name="waveProgress" format="float"/>-->
+    </declare-styleable>
+</resources>

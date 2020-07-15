@@ -8,10 +8,12 @@ import android.graphics.Path;
 import android.os.Build;
 import android.os.Handler;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.View;
 
 import com.example.projectdy2.R;
 
+import androidx.annotation.LongDef;
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 
@@ -23,6 +25,8 @@ public class WaveButtonView extends View {
 	private boolean isPressed;
 	private String textString = "temp";
 	float waveProgress;
+
+	String TAG = "测试wave";
 
 	private Path wavePath = new Path();
 	private Paint textPaint = new Paint();
@@ -86,7 +90,8 @@ public class WaveButtonView extends View {
 			textPaint.setColor(getResources().getColor(R.color.WaveButtonNotPress));
 
 			Paint.FontMetrics fontMetrics = textPaint.getFontMetrics();
-			int baseLine = (int) ((bottom+top)/2+(fontMetrics.bottom-fontMetrics.top)/2-fontMetrics.bottom);
+			int baseLine = (int) ((bottom-top)/2+(fontMetrics.bottom-fontMetrics.top)/2-fontMetrics.bottom);
+
 			canvas.drawText(textString , (right-left)*1.0f/2 , baseLine , textPaint);
 		}
 	}
@@ -103,7 +108,7 @@ public class WaveButtonView extends View {
 		textPaint.setColor(getResources().getColor(R.color.WaveButtonPress));
 
 		Paint.FontMetrics fontMetrics = textPaint.getFontMetrics();
-		int baseLine = (int) ((bottom+top)/2+(fontMetrics.bottom-fontMetrics.top)/2-fontMetrics.bottom);
+		int baseLine = (int) ((bottom-top)/2+(fontMetrics.bottom-fontMetrics.top)/2-fontMetrics.bottom);
 		canvas.drawText(textString , (right-left)*1.0f/2 , baseLine , textPaint);
 
 		//第二步画波浪
@@ -148,8 +153,12 @@ public class WaveButtonView extends View {
 		//第二步画字（为了覆盖上面波浪，所以顺序要调换）
 		textPaint.setColor(0xFFFFFFFF);
 
+		//top一定是0的trick
 		Paint.FontMetrics fontMetrics = textPaint.getFontMetrics();
-		int baseLine = (int) ((bottom+top)/2+(fontMetrics.bottom-fontMetrics.top)/2-fontMetrics.bottom);
+//		Log.d(TAG, "onDraw: "+ "bottom : " + bottom + " top :" + top);
+
+		int baseLine = (int) ((bottom-top)/2+(fontMetrics.bottom-fontMetrics.top)/2-fontMetrics.bottom);
+
 		canvas.drawText(textString , (right-left)*1.0f/2 , baseLine , textPaint);
 
 		canvas.clipOutPath(wavePath);

@@ -2,7 +2,7 @@
     <string name="app_name">ProjectDY2</string>
 
     <string name="bottom_fragment1">首页</string>
-    <string name="bottom_fragment2">附近</string>
+    <string name="bottom_fragment2">列表</string>
 
     <string name="bottom_fragment4">消息</string>
     <string name="bottom_fragment5">我的</string>

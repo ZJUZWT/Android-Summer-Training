@@ -3,10 +3,14 @@
     xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent"
     android:layout_height="match_parent">
 
+    <include
+        android:visibility="visible"
+        android:id="@+id/like_page_login"
+        layout="@layout/fragment_interface_no_user"/>
+
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/like_page"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="@color/design_default_color_secondary"/>
+        android:layout_height="match_parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

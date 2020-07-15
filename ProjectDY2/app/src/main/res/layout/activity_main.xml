@@ -9,7 +9,8 @@
     <LinearLayout
         android:id="@+id/linearLayout"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="50dp"
+        android:gravity="bottom"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
@@ -31,13 +32,23 @@
             app:isPressed="false"
             app:textString="@string/bottom_fragment2" />
 
-        <com.example.projectdy2.View.WaveButtonView
-            android:id="@+id/WaveButton3"
+<!--        <com.example.projectdy2.View.WaveButtonView-->
+<!--            android:id="@+id/WaveButton3"-->
+<!--            android:layout_width="0dp"-->
+<!--            android:layout_height="50dp"-->
+<!--            android:layout_weight="1"-->
+<!--            app:isPressed="false"-->
+<!--            app:textString="temp" />-->
+
+        <ImageButton
+            android:id="@+id/MidButton"
             android:layout_width="0dp"
             android:layout_height="50dp"
             android:layout_weight="1"
-            app:isPressed="false"
-            app:textString="temp" />
+            android:background="#00000000"
+            android:scaleType = "center"
+            android:src = "@drawable/mid_button"
+             />
 
         <com.example.projectdy2.View.WaveButtonView
             android:id="@+id/WaveButton4"

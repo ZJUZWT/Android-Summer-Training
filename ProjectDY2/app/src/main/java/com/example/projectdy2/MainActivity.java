@@ -24,6 +24,7 @@ import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
+import com.airbnb.lottie.LottieAnimationView;
 import com.example.projectdy2.Fragment.FragmentList;
 import com.example.projectdy2.Fragment.FragmentChat;
 import com.example.projectdy2.FragmentMainPage.FragmentMainPage;
@@ -205,11 +206,21 @@ public class MainActivity extends AppCompatActivity implements BringFrontWaveBut
 			fragmentTransaction = fragmentManager.beginTransaction();
 //			fragmentTransaction.setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out);
 
-			if (!fragment.isAdded()) {
+			if (!fragment.isAdded())
 				fragmentTransaction.hide(nowFragment).add(R.id.replace, fragment).commit();
-			} else {
+			else {
+				if ( nowFragment instanceof FragmentMy ) {
+					LottieAnimationView lottieAnimationView = nowFragment.getView().findViewById(R.id.lottie_login);
+					lottieAnimationView.pauseAnimation();
+				}
+				if ( fragment instanceof FragmentMy ) {
+					LottieAnimationView lottieAnimationView = fragment.getView().findViewById(R.id.lottie_login);
+					lottieAnimationView.playAnimation();
+				}
 				fragmentTransaction.hide(nowFragment).show(fragment).commit();
 			}
+
+
 			nowFragment = fragment;
 		}
 	}

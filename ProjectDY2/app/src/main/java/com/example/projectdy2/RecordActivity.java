@@ -38,7 +38,7 @@ public class RecordActivity extends AppCompatActivity implements SurfaceHolder.C
 	private boolean isRecording;
 	private int flashMode = 0;//0:关闭 1:打开 2:AUTO
 	private boolean isDelay = false;
-	private int mCameraId = 0;
+	private int mCameraId = 1;
 
 	private Camera mCamera;
 	private SurfaceView mSurfaceView;
@@ -65,6 +65,8 @@ public class RecordActivity extends AppCompatActivity implements SurfaceHolder.C
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_record);
 
+		ActivityCompat.requestPermissions(this,permissions,0);
+
 		StatusBarUtils.setColor(this,0xFF000000);
 		videoView = findViewById(R.id.videoView);
 		videoView.setVisibility(View.GONE);
@@ -72,6 +74,12 @@ public class RecordActivity extends AppCompatActivity implements SurfaceHolder.C
 			@Override
 			public void onPrepared(MediaPlayer mp) {
 				mp.setLooping(true);
+			}
+		});
+		videoView.setOnErrorListener(new MediaPlayer.OnErrorListener() {
+			@Override
+			public boolean onError(MediaPlayer mp, int what, int extra) {
+				return true;
 			}
 		});
 
@@ -86,9 +94,11 @@ public class RecordActivity extends AppCompatActivity implements SurfaceHolder.C
 				deleteButton.setVisibility(View.GONE);
 				uploadButton.setVisibility(View.GONE);
 
+				videoView.stopPlayback();
+
 				delete(mp4Path);
 //				videoView = findViewById(R.id.videoView);
-				videoView.pause();
+//				videoView.pause();
 //				mp4Path = getOutputMediaPath();
 //				mMediaRecorder.setOutputFile(mp4Path);
 //				prepareVideoRecorder();
@@ -151,19 +161,19 @@ public class RecordActivity extends AppCompatActivity implements SurfaceHolder.C
 	private void initCamera(int id) {
 		mCamera = Camera.open(id);
 		Camera.Parameters parameters = mCamera.getParameters();
-		parameters.setPictureFormat(ImageFormat.JPEG);
-		parameters.setFocusMode(Camera.Parameters.FOCUS_MODE_AUTO);
+//		parameters.setPictureFormat(ImageFormat.JPEG);
+//		parameters.setFocusMode(Camera.Parameters.FOCUS_MODE_AUTO);
 		parameters.set("orientation","portrait");
 		parameters.set("rotate",90);
-		parameters.setFocusMode(Camera.Parameters.FOCUS_MODE_CONTINUOUS_PICTURE);
-		Camera.Size size = parameters.getSupportedPreviewSizes().get(0);
-		int t = size.width ; size.width = size.height; size.height = t;
+//		parameters.setFocusMode(Camera.Parameters.FOCUS_MODE_CONTINUOUS_PICTURE);
+//		Camera.Size size = parameters.getSupportedPreviewSizes().get(0);
+//		int t = size.width ; size.width = size.height; size.height = t;
 //		parameters.setPreviewSize(size.width,size.height);
-		parameters.setPreviewSize(size.height,size.width);
+//		parameters.setPreviewSize(size.height,size.width);
 
-		ViewGroup.LayoutParams params = mSurfaceView.getLayoutParams();
-		params.height = params.width*size.height/size.width;
-		mSurfaceView.setLayoutParams(params);
+//		ViewGroup.LayoutParams params = mSurfaceView.getLayoutParams();
+//		params.height = params.width*size.height/size.width;
+//		mSurfaceView.setLayoutParams(params);
 
 		mCamera.setParameters(parameters);
 		mCamera.setDisplayOrientation(90);
@@ -182,7 +192,7 @@ public class RecordActivity extends AppCompatActivity implements SurfaceHolder.C
 		mMediaRecorder.setAudioSource(MediaRecorder.AudioSource.CAMCORDER);
 		mMediaRecorder.setVideoSource(MediaRecorder.VideoSource.CAMERA);
 
-		mMediaRecorder.setProfile(CamcorderProfile.get(CamcorderProfile.QUALITY_HIGH));
+//		mMediaRecorder.setProfile(CamcorderProfile.get(CamcorderProfile.QUALITY_HIGH));
 
 		mp4Path = getOutputMediaPath();
 		mMediaRecorder.setOutputFile(mp4Path);
@@ -206,7 +216,8 @@ public class RecordActivity extends AppCompatActivity implements SurfaceHolder.C
 			mMediaRecorder.release();
 			mMediaRecorder = null;
 			mCamera.lock();
-
+//			videoView.stopPlayback();
+//			videoView.re
 //			videoView.setVideoPath("");
 			deleteButton.setVisibility(View.VISIBLE);
 			uploadButton.setVisibility(View.VISIBLE);

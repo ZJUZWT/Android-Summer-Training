@@ -1,6 +1,7 @@
 package com.example.projectdy2.FragmentMainPage;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.text.Layout;
@@ -18,8 +19,10 @@ import com.example.projectdy2.DataBase.QueryDao;
 import com.example.projectdy2.FragmentMainPage.RecyclerViewManager.MainPageRVAdapter;
 import com.example.projectdy2.FragmentMainPage.RecyclerViewManager.MainPageRVData;
 import com.example.projectdy2.InterfaceForInteract.tabLayoutLottieInterface;
+import com.example.projectdy2.LoginActivity;
 import com.example.projectdy2.MainActivity;
 import com.example.projectdy2.R;
+import com.example.projectdy2.RegisterActivity;
 import com.example.projectdy2.VideoManager.model.GetVideosResponse;
 import com.example.projectdy2.VideoManager.model.Video;
 import com.google.android.material.snackbar.Snackbar;
@@ -97,6 +100,23 @@ public class LikePage extends Fragment implements tabLayoutLottieInterface {
 
 			}
 		}.start();
+
+		buttonLogin = view.findViewById(R.id.no_user_login);
+		buttonRegister = view.findViewById(R.id.no_user_register);
+		buttonLogin.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				Intent intent = new Intent(getActivity(), LoginActivity.class);
+				startActivity(intent);
+			}
+		});
+		buttonRegister.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				Intent intent = new Intent(getActivity(), RegisterActivity.class);
+				startActivity(intent);
+			}
+		});
 	}
 
 	@Override

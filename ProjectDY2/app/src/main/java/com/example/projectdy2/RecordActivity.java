@@ -16,6 +16,7 @@ import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.VideoView;
 
@@ -50,6 +51,9 @@ public class RecordActivity extends AppCompatActivity implements SurfaceHolder.C
 	private ImageButton recordButton;
 	private ImageButton switchButton;
 
+	private Button uploadButton;
+	private Button deleteButton;
+
 	private VideoView videoView;
 
 	private String[] permissions = new String[] {Manifest.permission.CAMERA};
@@ -70,17 +74,32 @@ public class RecordActivity extends AppCompatActivity implements SurfaceHolder.C
 				mp.setLooping(true);
 			}
 		});
-		videoView.setOnClickListener(new View.OnClickListener() {
+
+		deleteButton = findViewById(R.id.deleteButton);
+		uploadButton = findViewById(R.id.uploadButton);
+		deleteButton.setVisibility(View.GONE);
+		uploadButton.setVisibility(View.GONE);
+		deleteButton.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				if (videoView.getVisibility() == View.VISIBLE) videoView.start();
+				videoView.setVisibility(View.GONE);
+				deleteButton.setVisibility(View.GONE);
+				uploadButton.setVisibility(View.GONE);
+
+				delete(mp4Path);
+//				videoView = findViewById(R.id.videoView);
+				videoView.pause();
+//				mp4Path = getOutputMediaPath();
+//				mMediaRecorder.setOutputFile(mp4Path);
+//				prepareVideoRecorder();
 			}
 		});
-		videoView.setOnLongClickListener(new View.OnLongClickListener() {
+		uploadButton.setOnClickListener(new View.OnClickListener() {
 			@Override
-			public boolean onLongClick(View v) {
-				videoView.setVisibility(View.GONE);
-				return false;
+			public void onClick(View v) {
+//				prepareVideoRecorder();
+//				mp4Path = getOutputMediaPath();
+//				mMediaRecorder.setOutputFile(mp4Path);
 			}
 		});
 
@@ -188,8 +207,12 @@ public class RecordActivity extends AppCompatActivity implements SurfaceHolder.C
 			mMediaRecorder = null;
 			mCamera.lock();
 
+//			videoView.setVideoPath("");
+			deleteButton.setVisibility(View.VISIBLE);
+			uploadButton.setVisibility(View.VISIBLE);
 			videoView.setVisibility(View.VISIBLE);
 			videoView.setVideoPath(mp4Path);
+			Log.d(TAG, "record: "+mp4Path);
 			videoView.start();
 		} else {
 			if ( prepareVideoRecorder() ) {
@@ -197,7 +220,7 @@ public class RecordActivity extends AppCompatActivity implements SurfaceHolder.C
 			}
 		}
 		isRecording = !isRecording;
-		Log.d(TAG, "record: "+isRecording);
+//		Log.d(TAG, "record: "+isRecording);
 	}
 
 	private String getOutputMediaPath() {
@@ -341,14 +364,9 @@ public class RecordActivity extends AppCompatActivity implements SurfaceHolder.C
 		}
 	}
 
-//	private Camera getCamera(int id) {
-//		Camera camera = null;
-//		try {
-//			camera = Camera.open(id);
-//		} catch (Exception e) {
-//			Log.e(TAG, "getCamera: " + e);
-//		}
-//		return camera;
-//	}
+	private void delete(String filePath) {
+		File file = new File(filePath);
+		if ( file.exists() ) file.delete();
+	}
 
 }

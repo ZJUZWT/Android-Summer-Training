@@ -81,7 +81,7 @@ public class FragmentMainPage extends Fragment {
 			@Override
 			public void onTabUnselected(TabLayout.Tab tab) {
 //				Log.d(TAG, "onTabUnselected: ");
-				if ( tab == tabLayout.getTabAt(0) )tabLayoutLottieInterface.stopAnim();
+				if ( tab == tabLayout.getTabAt(0) ) tabLayoutLottieInterface.stopAnim();
 			}
 
 			@Override

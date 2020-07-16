@@ -9,16 +9,13 @@ import androidx.fragment.app.FragmentTransaction;
 import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
 import android.animation.ValueAnimator;
-import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
-import android.util.TypedValue;
 import android.view.MotionEvent;
 import android.view.View;
-import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
@@ -26,10 +23,11 @@ import android.widget.Toast;
 
 import com.airbnb.lottie.LottieAnimationView;
 import com.example.projectdy2.Fragment.FragmentList;
-import com.example.projectdy2.Fragment.FragmentChat;
+import com.example.projectdy2.FragmentChat.FragmentChat;
 import com.example.projectdy2.FragmentMainPage.FragmentMainPage;
 import com.example.projectdy2.FragmentMy.FragmentMy;
 import com.example.projectdy2.InterfaceForInteract.BringFrontWaveButton;
+import com.example.projectdy2.InterfaceForInteract.RefreshList;
 import com.example.projectdy2.Util.StatusBarUtils;
 import com.example.projectdy2.VideoManager.model.GetVideosResponse;
 import com.example.projectdy2.View.WaveButtonView;
@@ -71,7 +69,7 @@ public class MainActivity extends AppCompatActivity implements BringFrontWaveBut
 
 	private Fragment nowFragment = new Fragment();
 	private Fragment fragmentMainPage = new FragmentMainPage();
-	private Fragment fragmentAround = new FragmentList();
+	private Fragment fragmentList = new FragmentList();
 	private Fragment fragmentChat = new FragmentChat();
 	private Fragment fragmentMy = new FragmentMy();
 
@@ -154,7 +152,18 @@ public class MainActivity extends AppCompatActivity implements BringFrontWaveBut
 			@Override
 			public void onClick(View v) {
 				WaveButtonView waveButtonView = (WaveButtonView) v;
-				if ( waveButtonView.getIsPressed() ) return ;
+				if ( waveButtonView.getIsPressed() ) {
+					if (waveButtonView1.equals(pressedButton)) {
+						RefreshList refreshList = (RefreshList) fragmentMainPage;
+						refreshList.refresh();
+					}
+					if (waveButtonView2.equals(pressedButton)) {
+						RefreshList refreshList = (RefreshList) fragmentList;
+						refreshList.refresh();
+					}
+
+					return ;
+				}
 				pressedButton.setIsPressed(false);
 				waveButtonView.setIsPressed(true);
 
@@ -166,7 +175,7 @@ public class MainActivity extends AppCompatActivity implements BringFrontWaveBut
 				if (waveButtonView1.equals(pressedButton))
 					fragment_replace(fragmentMainPage);
 				if (waveButtonView2.equals(pressedButton))
-					fragment_replace(fragmentAround);
+					fragment_replace(fragmentList);
 				if (waveButtonView4.equals(pressedButton))
 					fragment_replace(fragmentChat);
 				if (waveButtonView5.equals(pressedButton))
@@ -217,10 +226,16 @@ public class MainActivity extends AppCompatActivity implements BringFrontWaveBut
 					LottieAnimationView lottieAnimationView = fragment.getView().findViewById(R.id.lottie_login);
 					lottieAnimationView.playAnimation();
 				}
+				if ( nowFragment instanceof FragmentMainPage ) {
+//					ViewPager viewPager = nowFragment.getView().findViewById(R.id.view_pager);
+//					viewPager.
+				}
+				if ( fragment instanceof FragmentMainPage ) {
+//					ViewPager viewPager = fragment.getView().findViewById(R.id.lottie_login);
+//					viewPager.playAnimation();
+				}
 				fragmentTransaction.hide(nowFragment).show(fragment).commit();
 			}
-
-
 			nowFragment = fragment;
 		}
 	}
@@ -376,5 +391,4 @@ public class MainActivity extends AppCompatActivity implements BringFrontWaveBut
 			return true;
 		}
 	}
-
 }

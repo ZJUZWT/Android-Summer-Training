@@ -41,13 +41,16 @@ public class FragmentMy extends Fragment {
 		layoutLogin = view.findViewById(R.id.my_page_login);
 		lottieAnimationView = view.findViewById(R.id.lottie_login);
 
+	}
+
+	@Override
+	public void onResume() {
+		Log.d(TAG, "onResume: ");
 		new Thread() {
 			@Override
 			public void run() {
 				QueryDao query = MyDataBase.inst(getContext()).queryDao();
 				if ( query.hasLogin().size() == 0 ) {
-//					view.setVisibility(View.GONE);
-//					recyclerView.setVisibility(View.GONE);
 					layoutLogin.setVisibility(View.VISIBLE);
 					lottieAnimationView.playAnimation();
 				} else {
@@ -56,11 +59,6 @@ public class FragmentMy extends Fragment {
 
 			}
 		}.start();
-	}
-
-	@Override
-	public void onResume() {
-		Log.d(TAG, "onResume: ");
 		super.onResume();
 	}
 

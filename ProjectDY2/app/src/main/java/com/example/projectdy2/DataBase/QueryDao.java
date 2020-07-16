@@ -4,6 +4,7 @@ import java.util.List;
 
 import androidx.room.Dao;
 import androidx.room.Entity;
+import androidx.room.Insert;
 import androidx.room.Query;
 
 @Dao
@@ -16,4 +17,10 @@ public interface QueryDao {
 
 	@Query("SELECT * FROM user WHERE username = :username")
 	List<UserEntity> userInfo(String username) ;
+
+	@Query("UPDATE user SET login = 1 WHERE username = :username")
+	void login(String username);
+
+	@Insert
+	long register(UserEntity userEntity);
 }

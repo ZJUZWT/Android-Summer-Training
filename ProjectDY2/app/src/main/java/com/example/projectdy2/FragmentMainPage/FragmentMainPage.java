@@ -3,42 +3,32 @@ package com.example.projectdy2.FragmentMainPage;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageButton;
-import android.widget.Toast;
 
-import com.airbnb.lottie.LottieAnimationView;
 import com.example.projectdy2.FragmentMainPage.TabLayoutManager.SectionsPagerAdapter;
 import com.example.projectdy2.InterfaceForInteract.BringFrontWaveButton;
-import com.example.projectdy2.InterfaceForInteract.tabLayoutLottieInterface;
+import com.example.projectdy2.InterfaceForInteract.FindCurrentTab;
+import com.example.projectdy2.InterfaceForInteract.RefreshList;
+import com.example.projectdy2.InterfaceForInteract.showLikePage;
+import com.example.projectdy2.InterfaceForInteract.showRecommendPage;
 import com.example.projectdy2.MainActivity;
 import com.example.projectdy2.R;
-import com.example.projectdy2.VideoManager.api.IMiniDouyinService;
-import com.example.projectdy2.VideoManager.model.GetVideosResponse;
-import com.example.projectdy2.VideoManager.model.Video;
 import com.google.android.material.tabs.TabLayout;
-
-import java.util.List;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-import androidx.recyclerview.widget.RecyclerView;
 import androidx.viewpager.widget.ViewPager;
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
-import retrofit2.Retrofit;
-import retrofit2.converter.gson.GsonConverterFactory;
 
-public class FragmentMainPage extends Fragment {
-	com.example.projectdy2.InterfaceForInteract.tabLayoutLottieInterface tabLayoutLottieInterface;
+public class FragmentMainPage extends Fragment implements RefreshList, FindCurrentTab {
+	showLikePage showLikePage;
+	showRecommendPage showRecommendPage;
 	private BringFrontWaveButton listenerForButton;
+	TabLayout tabLayout;
 
 	String TAG = "测试";
-
+	SectionsPagerAdapter sectionsPagerAdapter;
 	@Nullable
 	@Override
 	public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -49,17 +39,19 @@ public class FragmentMainPage extends Fragment {
 	public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
 		super.onViewCreated(view, savedInstanceState);
 		//TODO：初始化TabLayout
-		SectionsPagerAdapter sectionsPagerAdapter = new SectionsPagerAdapter(getContext(), getActivity().getSupportFragmentManager());
+		sectionsPagerAdapter = new SectionsPagerAdapter(getContext(), getActivity().getSupportFragmentManager());
 		ViewPager viewPager = view.findViewById(R.id.view_pager);
 		viewPager.setAdapter(sectionsPagerAdapter);				//给viewPage加入容器管理器
 //		viewPager.setCurrentItem(1);
-		final TabLayout tabLayout = view.findViewById(R.id.tabLayout);
+		tabLayout = view.findViewById(R.id.tabLayout);
 		tabLayout.setupWithViewPager(viewPager);				//给TabLayout加入管理的viewPage
 //		tabLayout.getTabAt(1).select();
 //		tabLayout.selectTab(tabLayout.getTabAt(1));
 		//整体的逻辑是一个activity上面，同步tabLayout和viewPager，而整体的配置都是在viewPager的Adapter上面
 
-		tabLayoutLottieInterface = (LikePage)sectionsPagerAdapter.getItem(0);
+		showLikePage = (LikePage)sectionsPagerAdapter.getItem(0);
+		showRecommendPage = (showRecommendPage)sectionsPagerAdapter.getItem(1);
+		tabLayout.getSelectedTabPosition();
 //		tabLayoutLottieInterface.startAnim();
 
 		//TODO：调整画面层次结构
@@ -75,13 +67,15 @@ public class FragmentMainPage extends Fragment {
 			public void onTabSelected(TabLayout.Tab tab) {
 //				tabLayoutLottieInterface.stopAnim();
 				Log.d(TAG, "onTabUnselected: " + tab.toString());
-				if ( tab == tabLayout.getTabAt(0) ) tabLayoutLottieInterface.startAnim();
+				if ( tab == tabLayout.getTabAt(0) ) showLikePage.showLikePage();
+				if ( tab == tabLayout.getTabAt(1) ) showRecommendPage.showRecommendPage();
 			}
 
 			@Override
 			public void onTabUnselected(TabLayout.Tab tab) {
 //				Log.d(TAG, "onTabUnselected: ");
-				if ( tab == tabLayout.getTabAt(0) ) tabLayoutLottieInterface.stopAnim();
+				if ( tab == tabLayout.getTabAt(0) ) showLikePage.pauseLikePage();
+				if ( tab == tabLayout.getTabAt(1) ) showRecommendPage.pauseRecommendPage();
 			}
 
 			@Override
@@ -92,5 +86,14 @@ public class FragmentMainPage extends Fragment {
 //		initRRVPage();
 	}
 
+	@Override
+	public void refresh() {
+		RefreshList refreshList = (RefreshList) sectionsPagerAdapter.getItem(1);
+		refreshList.refresh();
+	}
 
+	@Override
+	public int tabPosition() {
+		return tabLayout.getSelectedTabPosition();
+	}
 }

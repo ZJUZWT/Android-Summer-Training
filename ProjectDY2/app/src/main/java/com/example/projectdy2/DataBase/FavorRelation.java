@@ -23,7 +23,7 @@ public class FavorRelation {
 	public String getVideoLink() {
 		return videoLink;
 	}
-	public void setVideoLink(String password) {
+	public void setVideoLink(String videoLink) {
 		this.videoLink = videoLink;
 	}
 

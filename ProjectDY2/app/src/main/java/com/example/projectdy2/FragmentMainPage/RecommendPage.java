@@ -1,26 +1,38 @@
 package com.example.projectdy2.FragmentMainPage;
 
+import android.animation.AnimatorSet;
+import android.animation.ObjectAnimator;
 import android.annotation.TargetApi;
 import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.AnticipateInterpolator;
+import android.view.animation.OvershootInterpolator;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
 import android.widget.VideoView;
 
+import com.example.projectdy2.DataBase.MyDataBase;
+import com.example.projectdy2.DataBase.QueryDao;
 import com.example.projectdy2.FragmentMainPage.RecyclerViewManager.MainPageRVAdapter;
 import com.example.projectdy2.FragmentMainPage.RecyclerViewManager.VideoListLayoutManager;
+import com.example.projectdy2.InterfaceForInteract.FindCurrentTab;
 import com.example.projectdy2.InterfaceForInteract.OnViewPagerListener;
+import com.example.projectdy2.InterfaceForInteract.RefreshList;
+import com.example.projectdy2.InterfaceForInteract.showRecommendPage;
 import com.example.projectdy2.R;
 import com.example.projectdy2.VideoManager.api.IMiniDouyinService;
 import com.example.projectdy2.VideoManager.model.GetVideosResponse;
 import com.example.projectdy2.VideoManager.model.Video;
+import com.example.projectdy2.View.ShineButtonView;
+import com.google.android.material.snackbar.Snackbar;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -28,6 +40,7 @@ import java.util.Random;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.annotation.UiThread;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.OrientationHelper;
@@ -38,7 +51,10 @@ import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
-public class RecommendPage extends Fragment {
+public class RecommendPage extends Fragment implements RefreshList, showRecommendPage {
+	boolean isFocus;
+	int nowPosition;
+
 	boolean isPressed = false;
 	List<Video> data;
 	List<Video> usedData = new ArrayList<>();
@@ -85,10 +101,14 @@ public class RecommendPage extends Fragment {
 			@Override
 			public void onResponse(Call<GetVideosResponse> call, Response<GetVideosResponse> response) {
 				if (response.body() != null && response.body().videos != null) {
+					usedData.clear();
 					data = response.body().videos;
 					adapter.setData(data);
 
 					adapter.notifyDataSetChanged();
+					recyclerView.scrollToPosition(0);
+					isFocus = false;
+					nowPosition = 0 ;
 //					adapter.notifyItemChanged(0,data.size());
 				}
 			}
@@ -124,6 +144,7 @@ public class RecommendPage extends Fragment {
 				if (isNext)	index = 0;
 				else		index = 1;
 
+				nowPosition = position;
 				playVideo(position);
 			}
 		});
@@ -175,7 +196,9 @@ public class RecommendPage extends Fragment {
 		videoView.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
 			@Override
 			public void onPrepared(MediaPlayer mp) {
-				videoView.start();
+
+				FindCurrentTab findCurrentTab = (FindCurrentTab) getParentFragment();
+				if ( isFocus ) videoView.start();
 			}
 		});
 
@@ -198,6 +221,148 @@ public class RecommendPage extends Fragment {
 				}
 			}
 		});
+
+		final ShineButtonView likeButton = itemView.findViewById(R.id.mainPageLikeButton);
+		final ShineButtonView favorButton = itemView.findViewById(R.id.mainPageFavorButton);
+		likeButton.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(final View v) {
+				Log.d(TAG, "onClick: 按键");
+
+				new Thread() {
+					@Override
+					public void run() {
+						QueryDao query = MyDataBase.inst(getContext()).queryDao();
+						if ( query.hasLogin().size() == 0 ) {
+							Snackbar.make(v,"未登录无法使用", Snackbar.LENGTH_SHORT).show();
+						} else {
+							//TODO：数据库更新
+
+							getActivity().runOnUiThread(new Runnable() {
+								@Override
+								public void run() {
+									if ( likeButton.getDrawableId() == R.drawable.like_button ) {
+										//TODO:动画
+										ObjectAnimator enlargeXAnimatorRecover = ObjectAnimator.ofFloat(likeButton, "scaleX", 1.0f, 0f);
+										enlargeXAnimatorRecover.setDuration(500);
+										enlargeXAnimatorRecover.setInterpolator(new AnticipateInterpolator());
+										ObjectAnimator enlargeYAnimatorRecover = ObjectAnimator.ofFloat(likeButton, "scaleY", 1.0f, 0f);
+										enlargeYAnimatorRecover.setDuration(500);
+										enlargeYAnimatorRecover.setInterpolator(new AnticipateInterpolator());
+
+										AnimatorSet animatorSet = new AnimatorSet();
+										animatorSet.playTogether(enlargeXAnimatorRecover,enlargeYAnimatorRecover);
+										animatorSet.start();
+
+										new Handler().postDelayed(new Runnable(){
+											public void run(){
+												likeButton.loadImage(R.drawable.like_button_press);
+
+												ObjectAnimator enlargeXAnimatorRecover = ObjectAnimator.ofFloat(likeButton, "scaleX", 0f, 1f);
+												enlargeXAnimatorRecover.setDuration(500);
+												enlargeXAnimatorRecover.setInterpolator(new OvershootInterpolator());
+												ObjectAnimator enlargeYAnimatorRecover = ObjectAnimator.ofFloat(likeButton, "scaleY", 0f, 1f);
+												enlargeYAnimatorRecover.setDuration(500);
+												enlargeYAnimatorRecover.setInterpolator(new OvershootInterpolator());
+
+												AnimatorSet animatorSet = new AnimatorSet();
+												animatorSet.playTogether(enlargeXAnimatorRecover,enlargeYAnimatorRecover);
+												animatorSet.start();
+											}
+										},500);
+
+									} else {
+										likeButton.loadImage(R.drawable.like_button);
+									}
+								}
+							});
+						}
+					}
+				}.start();
+			}
+		});
+
+		favorButton.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(final View v) {
+				Log.d(TAG, "onClick: 按键");
+
+				new Thread() {
+					@Override
+					public void run() {
+						QueryDao query = MyDataBase.inst(getContext()).queryDao();
+						if ( query.hasLogin().size() == 0 ) {
+							Snackbar.make(v,"未登录无法使用", Snackbar.LENGTH_SHORT).show();
+						} else {
+							//TODO：数据库更新
+
+							getActivity().runOnUiThread(new Runnable() {
+								@Override
+								public void run() {
+									if ( favorButton.getDrawableId() == R.drawable.favor_button ) {
+										//TODO:动画
+										ObjectAnimator enlargeXAnimatorRecover = ObjectAnimator.ofFloat(favorButton, "scaleX", 1.0f, 0f);
+										enlargeXAnimatorRecover.setDuration(500);
+										enlargeXAnimatorRecover.setInterpolator(new AnticipateInterpolator());
+										ObjectAnimator enlargeYAnimatorRecover = ObjectAnimator.ofFloat(favorButton, "scaleY", 1.0f, 0f);
+										enlargeYAnimatorRecover.setDuration(500);
+										enlargeYAnimatorRecover.setInterpolator(new AnticipateInterpolator());
+
+										AnimatorSet animatorSet = new AnimatorSet();
+										animatorSet.playTogether(enlargeXAnimatorRecover,enlargeYAnimatorRecover);
+										animatorSet.start();
+
+										new Handler().postDelayed(new Runnable(){
+											public void run(){
+												favorButton.loadImage(R.drawable.favor_button_press);
+
+												ObjectAnimator enlargeXAnimatorRecover = ObjectAnimator.ofFloat(favorButton, "scaleX", 0f, 1f);
+												enlargeXAnimatorRecover.setDuration(500);
+												enlargeXAnimatorRecover.setInterpolator(new OvershootInterpolator());
+												ObjectAnimator enlargeYAnimatorRecover = ObjectAnimator.ofFloat(favorButton, "scaleY", 0f, 1f);
+												enlargeYAnimatorRecover.setDuration(500);
+												enlargeYAnimatorRecover.setInterpolator(new OvershootInterpolator());
+
+												AnimatorSet animatorSet = new AnimatorSet();
+												animatorSet.playTogether(enlargeXAnimatorRecover,enlargeYAnimatorRecover);
+												animatorSet.start();
+											}
+										},500);
+
+									} else {
+										favorButton.loadImage(R.drawable.favor_button);
+									}
+								}
+							});
+						}
+
+					}
+				}.start();
+			}
+		});
+
+	}
+
+	@Override
+	public void refresh() {
+		initVideo();
+	}
+
+	@Override
+	public void showRecommendPage() {
+		Log.d(TAG, "showRecommendPage: 过来");
+		
+		isFocus = true;
+		View itemView = recyclerView.getLayoutManager().findViewByPosition(nowPosition);
+		final VideoView videoView = itemView.findViewById(R.id.mainPageVideoView);
+		videoView.start();
+	}
+	@Override
+	public void pauseRecommendPage() {
+		isFocus = false;
+		View itemView = recyclerView.getLayoutManager().findViewByPosition(nowPosition);
+		final VideoView videoView = itemView.findViewById(R.id.mainPageVideoView);
+		videoView.pause();
 	}
 
 }

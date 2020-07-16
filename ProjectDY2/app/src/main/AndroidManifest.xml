@@ -39,6 +39,8 @@
             android:name=".LoginActivity"
             />
 
+        <activity android:name=".DialogActivity"/>
+
     </application>
 
 

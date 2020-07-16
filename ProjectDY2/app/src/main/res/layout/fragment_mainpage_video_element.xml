@@ -16,7 +16,7 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <com.example.projectdy2.View.ShineButtonView
-        android:id="@+id/mainPageLikeButton"
+        android:id="@+id/mainPageFavorButton"
         android:layout_width="120dp"
         android:layout_height="120dp"
         android:layout_marginBottom="160dp"
@@ -25,7 +25,7 @@
         app:layout_constraintEnd_toEndOf="parent" />
 
     <com.example.projectdy2.View.ShineButtonView
-        android:id="@+id/mainPageFavorButton"
+        android:id="@+id/mainPageLikeButton"
         android:layout_width="120dp"
         android:layout_height="120dp"
         android:layout_marginBottom="260dp"

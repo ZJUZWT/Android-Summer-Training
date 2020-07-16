@@ -15,6 +15,7 @@ import com.bumptech.glide.load.resource.bitmap.RoundedCorners;
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions;
 import com.bumptech.glide.request.RequestOptions;
 import com.bumptech.glide.request.transition.DrawableCrossFadeFactory;
+import com.example.projectdy2.InterfaceForInteract.RefreshList;
 import com.example.projectdy2.MainActivity;
 import com.example.projectdy2.R;
 import com.example.projectdy2.VideoActivity;
@@ -37,7 +38,7 @@ import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
-public class FragmentList extends Fragment {
+public class FragmentList extends Fragment implements RefreshList {
 	private List<Video> mVideos = new ArrayList<>();
 	private RecyclerView recyclerView;
 
@@ -129,6 +130,7 @@ public class FragmentList extends Fragment {
 
 //					Objects.requireNonNull(recyclerView.getAdapter()).notifyItemChanged(0,mVideos.size());
 					recyclerView.getAdapter().notifyDataSetChanged();
+					recyclerView.scrollToPosition(0);
 				}
 			}
 			@Override
@@ -137,4 +139,10 @@ public class FragmentList extends Fragment {
 			}
 		});
 	}
+
+	@Override
+	public void refresh() {
+		initVideo();
+	}
+
 }

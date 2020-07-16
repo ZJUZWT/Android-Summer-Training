@@ -2,46 +2,35 @@ package com.example.projectdy2.FragmentMainPage;
 
 import android.content.Context;
 import android.content.Intent;
-import android.os.Build;
 import android.os.Bundle;
-import android.text.Layout;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.LinearLayout;
-import android.widget.Toast;
 
 import com.airbnb.lottie.LottieAnimationView;
 import com.example.projectdy2.DataBase.MyDataBase;
 import com.example.projectdy2.DataBase.QueryDao;
 import com.example.projectdy2.FragmentMainPage.RecyclerViewManager.MainPageRVAdapter;
-import com.example.projectdy2.FragmentMainPage.RecyclerViewManager.MainPageRVData;
-import com.example.projectdy2.InterfaceForInteract.tabLayoutLottieInterface;
+import com.example.projectdy2.InterfaceForInteract.showLikePage;
 import com.example.projectdy2.LoginActivity;
 import com.example.projectdy2.MainActivity;
 import com.example.projectdy2.R;
 import com.example.projectdy2.RegisterActivity;
-import com.example.projectdy2.VideoManager.model.GetVideosResponse;
 import com.example.projectdy2.VideoManager.model.Video;
-import com.google.android.material.snackbar.Snackbar;
 
-import java.util.Comparator;
-import java.util.Date;
 import java.util.List;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.annotation.RequiresApi;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
 
-public class LikePage extends Fragment implements tabLayoutLottieInterface {
+public class LikePage extends Fragment implements showLikePage {
+	boolean isPause = false ;
+	boolean isPlay;
 	List<Video> data;
 	RecyclerView recyclerView;
 	MainPageRVAdapter adapter;
@@ -53,7 +42,7 @@ public class LikePage extends Fragment implements tabLayoutLottieInterface {
 	Button buttonRegister;
 	View layoutLogin;
 
-	String TAG = "测试";
+	String TAG = "Like";
 
 	@Override
 	public void onAttach(@NonNull Context context) {
@@ -86,20 +75,7 @@ public class LikePage extends Fragment implements tabLayoutLottieInterface {
 
 		lottieAnimationView = view.findViewById(R.id.lottie_login);
 		lottieAnimationView.playAnimation();
-		new Thread() {
-			@Override
-			public void run() {
-				QueryDao query = MyDataBase.inst(getContext()).queryDao();
-				if ( query.hasLogin().size() == 0 ) {
-//					view.setVisibility(View.GONE);
-					recyclerView.setVisibility(View.GONE);
-					layoutLogin.setVisibility(View.VISIBLE);
-				} else {
-					layoutLogin.setVisibility(View.GONE);
-				}
-
-			}
-		}.start();
+		isPlay = true;
 
 		buttonLogin = view.findViewById(R.id.no_user_login);
 		buttonRegister = view.findViewById(R.id.no_user_register);
@@ -120,14 +96,68 @@ public class LikePage extends Fragment implements tabLayoutLottieInterface {
 	}
 
 	@Override
-	public void stopAnim() {
-		Log.d(TAG, "stopAnim: ");
-		if ( layoutLogin.getVisibility() == View.VISIBLE) lottieAnimationView.pauseAnimation();
+	public void showLikePage() {
+		if ( layoutLogin.getVisibility() == View.VISIBLE) {
+			lottieAnimationView.playAnimation();
+			isPlay = true;
+		}
+		else {
+			//TODO:视频播放
+
+		}
+	}
+	@Override
+	public void pauseLikePage() {
+		if ( layoutLogin.getVisibility() == View.VISIBLE) {
+			lottieAnimationView.pauseAnimation();
+			isPlay = false;
+		}
+		else {
+			//TODO:视频暂停
+
+		}
 	}
 
 	@Override
-	public void startAnim() {
-		Log.d(TAG, "startAnim: ");
-		if ( layoutLogin.getVisibility() == View.VISIBLE) lottieAnimationView.playAnimation();
+	public void onResume() {
+		Log.d(TAG, "onResume: " + lottieAnimationView.isAnimating());
+		super.onResume();
+		new Thread() {
+			@Override
+			public void run() {
+				QueryDao query = MyDataBase.inst(getContext()).queryDao();
+				if ( query.hasLogin().size() == 0 ) {
+//					view.setVisibility(View.GONE);
+					recyclerView.setVisibility(View.GONE);
+					layoutLogin.setVisibility(View.VISIBLE);
+				} else {
+					layoutLogin.setVisibility(View.GONE);
+				}
+
+			}
+		}.start();
+		if ( isPause && isPlay ) lottieAnimationView.playAnimation();
+		isPause = false;
 	}
+
+	@Override
+	public void onPause() {
+		isPause = true;
+//		isPlay = lottieAnimationView.isAnimating();
+		Log.d(TAG, "onPause: " + isPlay);
+		super.onPause();
+	}
+
+	@Override
+	public void onStop() {
+		Log.d(TAG, "onStop: ");
+		super.onStop();
+	}
+
+	@Override
+	public void onDestroyView() {
+		Log.d(TAG, "onDestroyView: ");
+		super.onDestroyView();
+	}
+
 }

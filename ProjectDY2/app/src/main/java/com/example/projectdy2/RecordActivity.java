@@ -35,10 +35,10 @@ import androidx.core.app.ActivityCompat;
 
 
 public class RecordActivity extends AppCompatActivity implements SurfaceHolder.Callback {
-	private boolean isRecording;
+	private boolean isRecording = false;
 	private int flashMode = 0;//0:关闭 1:打开 2:AUTO
 	private boolean isDelay = false;
-	private int mCameraId = 1;
+	private int mCameraId = 0;
 
 	private Camera mCamera;
 	private SurfaceView mSurfaceView;
@@ -65,7 +65,7 @@ public class RecordActivity extends AppCompatActivity implements SurfaceHolder.C
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_record);
 
-		ActivityCompat.requestPermissions(this,permissions,0);
+//		ActivityCompat.requestPermissions(this,permissions,0);
 
 		StatusBarUtils.setColor(this,0xFF000000);
 		videoView = findViewById(R.id.videoView);
@@ -161,8 +161,8 @@ public class RecordActivity extends AppCompatActivity implements SurfaceHolder.C
 	private void initCamera(int id) {
 		mCamera = Camera.open(id);
 		Camera.Parameters parameters = mCamera.getParameters();
-//		parameters.setPictureFormat(ImageFormat.JPEG);
-//		parameters.setFocusMode(Camera.Parameters.FOCUS_MODE_AUTO);
+		parameters.setPictureFormat(ImageFormat.JPEG);
+		parameters.setFocusMode(Camera.Parameters.FOCUS_MODE_AUTO);
 		parameters.set("orientation","portrait");
 		parameters.set("rotate",90);
 //		parameters.setFocusMode(Camera.Parameters.FOCUS_MODE_CONTINUOUS_PICTURE);
@@ -192,12 +192,12 @@ public class RecordActivity extends AppCompatActivity implements SurfaceHolder.C
 		mMediaRecorder.setAudioSource(MediaRecorder.AudioSource.CAMCORDER);
 		mMediaRecorder.setVideoSource(MediaRecorder.VideoSource.CAMERA);
 
-//		mMediaRecorder.setProfile(CamcorderProfile.get(CamcorderProfile.QUALITY_HIGH));
+		mMediaRecorder.setProfile(CamcorderProfile.get(CamcorderProfile.QUALITY_HIGH));
 
 		mp4Path = getOutputMediaPath();
 		mMediaRecorder.setOutputFile(mp4Path);
 
-		mMediaRecorder.setPreviewDisplay(mHolder.getSurface());
+//		mMediaRecorder.setPreviewDisplay(mHolder.getSurface());
 		mMediaRecorder.setOrientationHint(90);
 		try {
 			mMediaRecorder.prepare();
@@ -231,7 +231,7 @@ public class RecordActivity extends AppCompatActivity implements SurfaceHolder.C
 			}
 		}
 		isRecording = !isRecording;
-//		Log.d(TAG, "record: "+isRecording);
+		Log.d(TAG, "record: "+isRecording);
 	}
 
 	private String getOutputMediaPath() {

@@ -3,11 +3,10 @@ package com.example.projectdy2.DataBase;
 import androidx.annotation.NonNull;
 import androidx.room.ColumnInfo;
 import androidx.room.Entity;
-import androidx.room.ForeignKey;
 
-@Entity(tableName = "like",
+@Entity(tableName = "made",
 		primaryKeys = {"user_id","videoURL"})
-public class LikeRelation {
+public class MadeRelation {
 	@NonNull
 	@ColumnInfo(name = "user_id")
 	private int id;
@@ -16,7 +15,7 @@ public class LikeRelation {
 	@ColumnInfo(name = "videoURL")
 	private String videoLink;
 
-	public LikeRelation(int id, String videoLink) {
+	public MadeRelation(int id, String videoLink) {
 		this.id = id;
 		this.videoLink = videoLink;
 	}

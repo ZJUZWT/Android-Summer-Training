@@ -22,6 +22,7 @@ public class ShineButtonView extends View {
 	private boolean isPress;
 	private boolean isInit = false ;
 
+	private int drawableId;
 	private Bitmap bitmap;
 	private Picture mPicture = new Picture();
 	private Paint picPaint = new Paint();
@@ -56,11 +57,18 @@ public class ShineButtonView extends View {
 	}
 
 	public void loadImage(boolean id) { //false是喜欢 true是收藏
-		if ( id ) BitMapMethod(R.drawable.like_button);
-		else BitMapMethod(R.drawable.favor_button);
+		if ( !id ) {
+			BitMapMethod(R.drawable.like_button);
+			drawableId = R.drawable.like_button;
+		}
+		else {
+			BitMapMethod(R.drawable.favor_button);
+			drawableId = R.drawable.favor_button;
+		}
 	}
 
 	public void loadImage(int id) {
+		drawableId = id;
 		BitMapMethod(id);
 //		VectorMethod();
 //		invalidate();
@@ -69,6 +77,7 @@ public class ShineButtonView extends View {
 	private void BitMapMethod(int id) {
 		isInit = true ;
 		bitmap = getBitmap(getContext(),id);
+		invalidate();
 	}
 
 	private void VectorMethod() {
@@ -104,4 +113,6 @@ public class ShineButtonView extends View {
 	public void setOnClickListener(@Nullable OnClickListener l) {
 		super.setOnClickListener(l);
 	}
+
+	public int getDrawableId() { return drawableId; }
 }

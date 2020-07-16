@@ -1,6 +1,8 @@
 package com.example.projectdy2.FragmentMainPage.RecyclerViewManager;
 
+import android.media.MediaPlayer;
 import android.net.Uri;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,6 +16,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import androidx.annotation.NonNull;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.RecyclerView;
 
 public class MainPageRVAdapter extends RecyclerView.Adapter<MainPageRVAdapter.MainPageRVViewHolder> {
@@ -26,12 +29,25 @@ public class MainPageRVAdapter extends RecyclerView.Adapter<MainPageRVAdapter.Ma
 		private VideoView videoView;
 		private View contentView;
 
+		private String TAG = "testSIZE" ;
+
 		public MainPageRVViewHolder(@NonNull View itemView) {
 			super(itemView);
 			contentView = itemView ;
 			favorButton = itemView.findViewById(R.id.mainPageFavorButton);
 			likeButton = itemView.findViewById(R.id.mainPageLikeButton);
 			videoView = itemView.findViewById(R.id.mainPageVideoView);
+//			videoView.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
+//				@Override
+//				public void onPrepared(MediaPlayer mp) {
+//					int width = mp.getVideoWidth();
+//					int height = mp.getVideoHeight();
+//					Log.d(TAG, "onCreate: " + "宽:"+width + " 高:" + height);
+//					ConstraintLayout.LayoutParams layoutParams = (ConstraintLayout.LayoutParams)videoView.getLayoutParams();
+//					layoutParams.height = layoutParams.width*height/width;
+//					videoView.setLayoutParams(layoutParams);
+//				}
+//			});
 		}
 
 		public void onBind(int position,Video data) {	//绑定数据，前面只能算作容器，view什么的都是容器，而内容是string,icon什么的

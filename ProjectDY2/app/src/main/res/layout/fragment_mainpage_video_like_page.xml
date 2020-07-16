@@ -6,7 +6,7 @@
     android:layout_height="match_parent">
 
     <TextView
-        android:id="@+id/no_user_text2"
+        android:id="@+id/no_like_video"
         android:layout_width="224dp"
         android:layout_height="101dp"
         android:layout_marginStart="100dp"

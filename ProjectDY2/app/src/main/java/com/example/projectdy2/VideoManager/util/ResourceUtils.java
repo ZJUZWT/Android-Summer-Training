@@ -11,13 +11,24 @@ import android.provider.DocumentsContract;
 import android.provider.MediaStore;
 //import android.support.v4.content.CursorLoader;
 
+
 public class ResourceUtils {
 
+    /**
+     * from: https://gist.github.com/HBiSoft/15899990b8cd0723c3a894c1636550a8
+     * @param context
+     * @param fileUri
+     * @return
+     */
     public static String getRealPath(Context context, Uri fileUri) {
         String realPath;
+        // SDK < API11
+
         realPath = ResourceUtils.getRealPathFromURI_API19(context, fileUri);
+
         return realPath;
     }
+
 
     @SuppressLint("NewApi")
     public static String getRealPathFromURI_API19(final Context context, final Uri uri) {

@@ -28,6 +28,8 @@ import com.example.projectdy2.FragmentMainPage.FragmentMainPage;
 import com.example.projectdy2.FragmentMy.FragmentMy;
 import com.example.projectdy2.InterfaceForInteract.BringFrontWaveButton;
 import com.example.projectdy2.InterfaceForInteract.RefreshList;
+import com.example.projectdy2.InterfaceForInteract.showLikePage;
+import com.example.projectdy2.InterfaceForInteract.showRecommendPage;
 import com.example.projectdy2.Util.StatusBarUtils;
 import com.example.projectdy2.VideoManager.model.GetVideosResponse;
 import com.example.projectdy2.View.WaveButtonView;
@@ -52,6 +54,9 @@ public class MainActivity extends AppCompatActivity implements BringFrontWaveBut
 
 	private boolean isFetchData = false;
 	private boolean isQuit = false;
+
+	private showRecommendPage showRecommendPage;
+	private showLikePage showLikePage;
 
 	private WaveButtonView waveButtonView1;
 	private WaveButtonView waveButtonView2;
@@ -96,6 +101,8 @@ public class MainActivity extends AppCompatActivity implements BringFrontWaveBut
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
 
+		showRecommendPage = (showRecommendPage) fragmentMainPage;
+		showLikePage = (showLikePage) fragmentMainPage;
 //		StatusBarUtils.setStatusBarFullTransparent(this);
 //		StatusBarUtils.setFitSystemWindow(contentViewGroup,false,this);
 		//TODO:
@@ -215,6 +222,12 @@ public class MainActivity extends AppCompatActivity implements BringFrontWaveBut
 			fragmentTransaction = fragmentManager.beginTransaction();
 //			fragmentTransaction.setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out);
 
+
+			if ( nowFragment instanceof FragmentMainPage ) {
+				showLikePage.pauseLikePage();
+				showRecommendPage.pauseRecommendPage();
+			}
+
 			if (!fragment.isAdded())
 				fragmentTransaction.hide(nowFragment).add(R.id.replace, fragment).commit();
 			else {
@@ -226,12 +239,9 @@ public class MainActivity extends AppCompatActivity implements BringFrontWaveBut
 					LottieAnimationView lottieAnimationView = fragment.getView().findViewById(R.id.lottie_login);
 					lottieAnimationView.playAnimation();
 				}
-				if ( nowFragment instanceof FragmentMainPage ) {
-//					ViewPager viewPager = nowFragment.getView().findViewById(R.id.view_pager);
-//					viewPager.
-				}
 				if ( fragment instanceof FragmentMainPage ) {
-//					ViewPager viewPager = fragment.getView().findViewById(R.id.lottie_login);
+					showLikePage.showLikePage();
+					showRecommendPage.showRecommendPage();
 //					viewPager.playAnimation();
 				}
 				fragmentTransaction.hide(nowFragment).show(fragment).commit();

@@ -21,7 +21,7 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.viewpager.widget.ViewPager;
 
-public class FragmentMainPage extends Fragment implements RefreshList, FindCurrentTab {
+public class FragmentMainPage extends Fragment implements RefreshList, FindCurrentTab, showRecommendPage, showLikePage{
 	showLikePage showLikePage;
 	showRecommendPage showRecommendPage;
 	private BringFrontWaveButton listenerForButton;
@@ -95,5 +95,25 @@ public class FragmentMainPage extends Fragment implements RefreshList, FindCurre
 	@Override
 	public int tabPosition() {
 		return tabLayout.getSelectedTabPosition();
+	}
+
+	@Override
+	public void showRecommendPage() {
+		if ( tabPosition() == 1 ) showRecommendPage.showRecommendPage();
+	}
+
+	@Override
+	public void pauseRecommendPage() {
+		if ( tabPosition() == 1 ) showRecommendPage.pauseRecommendPage();
+	}
+
+	@Override
+	public void showLikePage() {
+		if ( tabPosition() == 0 ) showLikePage.showLikePage();
+	}
+
+	@Override
+	public void pauseLikePage() {
+		if ( tabPosition() == 0 ) showLikePage.pauseLikePage();
 	}
 }

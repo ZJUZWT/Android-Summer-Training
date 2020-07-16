@@ -14,7 +14,7 @@ public class SectionsPagerAdapter extends FragmentPagerAdapter {
 	LikePage likePage = new LikePage();
 	RecommendPage recommendPage = new RecommendPage();
 
-	private static final String[] TAB_TITLES = new String[]{"喜爱","推荐"};
+	private static final String[] TAB_TITLES = new String[]{"收藏","推荐"};
 	private final Context mContext;
 
 	public SectionsPagerAdapter(Context context, FragmentManager fm) {

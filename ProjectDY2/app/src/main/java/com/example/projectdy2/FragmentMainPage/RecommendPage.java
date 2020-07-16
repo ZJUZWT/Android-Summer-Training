@@ -15,12 +15,16 @@ import android.view.ViewGroup;
 import android.view.animation.AnticipateInterpolator;
 import android.view.animation.OvershootInterpolator;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
 import android.widget.VideoView;
 
+import com.example.projectdy2.DataBase.FavorRelation;
+import com.example.projectdy2.DataBase.LikeRelation;
 import com.example.projectdy2.DataBase.MyDataBase;
 import com.example.projectdy2.DataBase.QueryDao;
+import com.example.projectdy2.DataBase.UserEntity;
 import com.example.projectdy2.FragmentMainPage.RecyclerViewManager.MainPageRVAdapter;
 import com.example.projectdy2.FragmentMainPage.RecyclerViewManager.VideoListLayoutManager;
 import com.example.projectdy2.InterfaceForInteract.FindCurrentTab;
@@ -28,6 +32,7 @@ import com.example.projectdy2.InterfaceForInteract.OnViewPagerListener;
 import com.example.projectdy2.InterfaceForInteract.RefreshList;
 import com.example.projectdy2.InterfaceForInteract.showRecommendPage;
 import com.example.projectdy2.R;
+import com.example.projectdy2.VideoActivity;
 import com.example.projectdy2.VideoManager.api.IMiniDouyinService;
 import com.example.projectdy2.VideoManager.model.GetVideosResponse;
 import com.example.projectdy2.VideoManager.model.Video;
@@ -41,6 +46,7 @@ import java.util.Random;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.UiThread;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.OrientationHelper;
@@ -62,7 +68,7 @@ public class RecommendPage extends Fragment implements RefreshList, showRecommen
 	MainPageRVAdapter adapter;
 	LinearLayoutManager linearLayoutManager;
 	VideoListLayoutManager myLayoutManager;
-
+	ProgressBar progressBar;
 	String TAG = "测试" ;
 
 	private Retrofit retrofit = new Retrofit.Builder()
@@ -139,7 +145,7 @@ public class RecommendPage extends Fragment implements RefreshList, showRecommen
 
 			@Override
 			public void onPageSelected(int position, boolean isNext) {
-//				Log.d(TAG,"释放位置:"+position +" 下一页:"+isNext);
+				Log.d(TAG,"释放位置:"+position +" 下一页:"+isNext);
 				int index;
 				if (isNext)	index = 0;
 				else		index = 1;
@@ -165,7 +171,7 @@ public class RecommendPage extends Fragment implements RefreshList, showRecommen
 
 	private void playVideo(int position) {
 		isPressed = false;
-		Uri videoLink ;
+		final Uri videoLink ;
 		int random = (int) (Math.random()*data.size());
 		if ( position >= usedData.size() ) {
 			usedData.add(data.get(random));
@@ -183,6 +189,9 @@ public class RecommendPage extends Fragment implements RefreshList, showRecommen
 //		final MediaPlayer[] mediaPlayer = new MediaPlayer[1];
 //		Log.d(TAG,"position : " + position + " 视频URL:"+data.get(position).videoUrl );
 
+		progressBar = itemView.findViewById(R.id.progress_bar);
+		progressBar.setVisibility(View.VISIBLE);
+
 		videoView.setVideoURI(videoLink);
 		videoView.setOnInfoListener(new MediaPlayer.OnInfoListener() {
 			@Override
@@ -196,9 +205,20 @@ public class RecommendPage extends Fragment implements RefreshList, showRecommen
 		videoView.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
 			@Override
 			public void onPrepared(MediaPlayer mp) {
+//				FindCurrentTab findCurrentTab = (FindCurrentTab) getParentFragment();
+				progressBar.setVisibility(View.GONE);
 
-				FindCurrentTab findCurrentTab = (FindCurrentTab) getParentFragment();
-				if ( isFocus ) videoView.start();
+				int width = mp.getVideoWidth();
+				int height = mp.getVideoHeight();
+				ConstraintLayout.LayoutParams layoutParams = (ConstraintLayout.LayoutParams)videoView.getLayoutParams();
+				layoutParams.height = layoutParams.width*height/width;
+//				layoutParams.topMargin = (1920-layoutParams.height)/2;
+				Log.d(TAG, "onCreate: !!!" + "宽:"+layoutParams.width + " 高:" + layoutParams.height);
+				videoView.setLayoutParams(layoutParams);
+
+				if ( isFocus ) {
+					videoView.start();
+				}
 			}
 		});
 
@@ -223,7 +243,9 @@ public class RecommendPage extends Fragment implements RefreshList, showRecommen
 		});
 
 		final ShineButtonView likeButton = itemView.findViewById(R.id.mainPageLikeButton);
+		initLikeButton(likeButton,videoLink.toString());
 		final ShineButtonView favorButton = itemView.findViewById(R.id.mainPageFavorButton);
+		initFavorButton(favorButton,videoLink.toString());
 		likeButton.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(final View v) {
@@ -237,11 +259,12 @@ public class RecommendPage extends Fragment implements RefreshList, showRecommen
 							Snackbar.make(v,"未登录无法使用", Snackbar.LENGTH_SHORT).show();
 						} else {
 							//TODO：数据库更新
+							if ( likeButton.getDrawableId() == R.drawable.like_button ) {
+								query.addLike(new LikeRelation(query.hasLogin().get(0).getId(),videoLink.toString()));
 
-							getActivity().runOnUiThread(new Runnable() {
-								@Override
-								public void run() {
-									if ( likeButton.getDrawableId() == R.drawable.like_button ) {
+								getActivity().runOnUiThread(new Runnable() {
+									@Override
+									public void run() {
 										//TODO:动画
 										ObjectAnimator enlargeXAnimatorRecover = ObjectAnimator.ofFloat(likeButton, "scaleX", 1.0f, 0f);
 										enlargeXAnimatorRecover.setDuration(500);
@@ -251,11 +274,11 @@ public class RecommendPage extends Fragment implements RefreshList, showRecommen
 										enlargeYAnimatorRecover.setInterpolator(new AnticipateInterpolator());
 
 										AnimatorSet animatorSet = new AnimatorSet();
-										animatorSet.playTogether(enlargeXAnimatorRecover,enlargeYAnimatorRecover);
+										animatorSet.playTogether(enlargeXAnimatorRecover, enlargeYAnimatorRecover);
 										animatorSet.start();
 
-										new Handler().postDelayed(new Runnable(){
-											public void run(){
+										new Handler().postDelayed(new Runnable() {
+											public void run() {
 												likeButton.loadImage(R.drawable.like_button_press);
 
 												ObjectAnimator enlargeXAnimatorRecover = ObjectAnimator.ofFloat(likeButton, "scaleX", 0f, 1f);
@@ -266,16 +289,21 @@ public class RecommendPage extends Fragment implements RefreshList, showRecommen
 												enlargeYAnimatorRecover.setInterpolator(new OvershootInterpolator());
 
 												AnimatorSet animatorSet = new AnimatorSet();
-												animatorSet.playTogether(enlargeXAnimatorRecover,enlargeYAnimatorRecover);
+												animatorSet.playTogether(enlargeXAnimatorRecover, enlargeYAnimatorRecover);
 												animatorSet.start();
 											}
-										},500);
-
-									} else {
+										}, 500);
+									}
+								});
+							} else {
+								query.delLike(query.hasLogin().get(0).getId(),videoLink.toString());
+								getActivity().runOnUiThread(new Runnable() {
+									@Override
+									public void run() {
 										likeButton.loadImage(R.drawable.like_button);
 									}
-								}
-							});
+								});
+							}
 						}
 					}
 				}.start();
@@ -296,11 +324,13 @@ public class RecommendPage extends Fragment implements RefreshList, showRecommen
 						} else {
 							//TODO：数据库更新
 
-							getActivity().runOnUiThread(new Runnable() {
-								@Override
-								public void run() {
-									if ( favorButton.getDrawableId() == R.drawable.favor_button ) {
-										//TODO:动画
+							if ( favorButton.getDrawableId() == R.drawable.favor_button ) {
+								//TODO:动画
+								query.addFavor(new FavorRelation(query.hasLogin().get(0).getId(),videoLink.toString()));
+
+								getActivity().runOnUiThread(new Runnable() {
+									@Override
+									public void run() {
 										ObjectAnimator enlargeXAnimatorRecover = ObjectAnimator.ofFloat(favorButton, "scaleX", 1.0f, 0f);
 										enlargeXAnimatorRecover.setDuration(500);
 										enlargeXAnimatorRecover.setInterpolator(new AnticipateInterpolator());
@@ -328,12 +358,17 @@ public class RecommendPage extends Fragment implements RefreshList, showRecommen
 												animatorSet.start();
 											}
 										},500);
-
-									} else {
+									}
+								});
+							} else {
+								query.delFavor(query.hasLogin().get(0).getId(),videoLink.toString());
+								getActivity().runOnUiThread(new Runnable() {
+									@Override
+									public void run() {
 										favorButton.loadImage(R.drawable.favor_button);
 									}
-								}
-							});
+								});
+							}
 						}
 
 					}
@@ -363,6 +398,69 @@ public class RecommendPage extends Fragment implements RefreshList, showRecommen
 		View itemView = recyclerView.getLayoutManager().findViewByPosition(nowPosition);
 		final VideoView videoView = itemView.findViewById(R.id.mainPageVideoView);
 		videoView.pause();
+	}
+
+	private void initLikeButton(final ShineButtonView likeButton, final String url) {
+		//TODO 查询当前状态
+		new Thread() {
+			@Override
+			public void run() {
+				QueryDao query = MyDataBase.inst(getContext()).queryDao();
+				List<UserEntity> temp = query.hasLogin();
+
+
+				if ( temp.size() == 0 ) { //没有登陆
+					getActivity().runOnUiThread(new Runnable() {
+						@Override
+						public void run() {
+							likeButton.loadImage(R.drawable.like_button);
+						}
+					});
+				} else {
+					final List<LikeRelation> temp2 = query.isLike(temp.get(0).getId(),url);
+					getActivity().runOnUiThread(new Runnable() {
+						@Override
+						public void run() {
+							if (temp2.size() == 0)
+								likeButton.loadImage(R.drawable.like_button);
+							else
+								likeButton.loadImage(R.drawable.like_button_press);
+						}
+					});
+				}
+			}
+		}.start();
+	}
+
+	private void initFavorButton(final ShineButtonView favorButton, final String url) {
+		//TODO 查询当前状态
+		new Thread() {
+			@Override
+			public void run() {
+				QueryDao query = MyDataBase.inst(getContext()).queryDao();
+				List<UserEntity> temp = query.hasLogin();
+
+				if ( temp.size() == 0 ) { //没有登陆
+					getActivity().runOnUiThread(new Runnable() {
+						@Override
+						public void run() {
+							favorButton.loadImage(R.drawable.favor_button);
+						}
+					});
+				} else {
+					final List<FavorRelation> temp2 = query.isFavor(temp.get(0).getId(),url);
+					getActivity().runOnUiThread(new Runnable() {
+						@Override
+						public void run() {
+							if (temp2.size() == 0)
+								favorButton.loadImage(R.drawable.favor_button);
+							else
+								favorButton.loadImage(R.drawable.favor_button_press);
+						}
+					});
+				}
+			}
+		}.start();
 	}
 
 }

@@ -57,7 +57,7 @@ public class FavorPageRVAdapter extends RecyclerView.Adapter<FavorPageRVAdapter.
 
 	@Override
 	public FavorPageRVAdapter.MainPageRVViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-		return new MainPageRVViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.fragment_mainpage_video_element, parent, false));
+		return new MainPageRVViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.fragment_mainpage_favor_video_element, parent, false));
 	}
 
 	@Override

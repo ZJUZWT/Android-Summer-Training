@@ -11,7 +11,7 @@ import androidx.recyclerview.widget.PagerSnapHelper;
 import androidx.recyclerview.widget.RecyclerView;
 
 public class VideoListLayoutManager extends LinearLayoutManager implements RecyclerView.OnChildAttachStateChangeListener {
-	private int mDrift;//位移，用来判断移动方向
+	private int mDrift;
 
 	private PagerSnapHelper mPagerSnapHelper;
 	private OnViewPagerListener mOnViewPagerListener;
@@ -31,14 +31,10 @@ public class VideoListLayoutManager extends LinearLayoutManager implements Recyc
 		mPagerSnapHelper.attachToRecyclerView(view);
 		super.onAttachedToWindow(view);
 	}
-//当Item添加进来了  调用这个方法
 
-	//
 	@Override
 	public void onChildViewAttachedToWindow(@NonNull View view) {
-//        播放视频操作 即将要播放的是上一个视频 还是下一个视频
 		if (mDrift > 0) {
-//            向上
 			if (mOnViewPagerListener != null) {
 				mOnViewPagerListener.onPageSelected(getPosition(view), true);
 			}
@@ -67,7 +63,6 @@ public class VideoListLayoutManager extends LinearLayoutManager implements Recyc
 
 	@Override
 	public void onChildViewDetachedFromWindow(@NonNull View view) {
-//暂停播放操作
 		if (mDrift >= 0){
 			if (mOnViewPagerListener != null) mOnViewPagerListener.onPageRelease(true,getPosition(view));
 		}else {

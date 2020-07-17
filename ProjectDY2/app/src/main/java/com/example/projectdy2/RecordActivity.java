@@ -160,14 +160,17 @@ public class RecordActivity extends AppCompatActivity implements SurfaceHolder.C
 //				File file = new File(mp4Path);
 //				file.
 
-				videoURI = Uri.fromFile(new File(mp4Path));
-
+//				videoURI = Uri.fromFile(new File(mp4Path));
+//				getMultipartFromUri()
 				if ( imageURI == null ) {
 					Toast.makeText(RecordActivity.this,"请先选择封面",Toast.LENGTH_SHORT).show();
 					return;
 				}
 				MultipartBody.Part coverImagePart = getMultipartFromUri("cover_image", imageURI);
-				MultipartBody.Part videoPart = getMultipartFromUri("video", videoURI);
+				MultipartBody.Part videoPart = getMultipartFromUri("video", mp4Path);
+
+				Log.d(TAG, "onClick: IMAGE_URI" + imageURI);
+				Log.d(TAG, "onClick: VIDEO_URI" + videoURI);
 
 				uploadButton.setText("上传中...");
 				uploadButton.setEnabled(false);
@@ -182,10 +185,10 @@ public class RecordActivity extends AppCompatActivity implements SurfaceHolder.C
 								Log.d(TAG, "onResponse: onResponse");
 								
 								if (response.body() != null) {
-									Toast.makeText(RecordActivity.this, response.body().toString(), Toast.LENGTH_SHORT)
-											.show();
+//									Toast.makeText(RecordActivity.this, response.body().toString(), Toast.LENGTH_SHORT)
+//											.show();
 								}
-//								Toast.makeText(RecordActivity.this, "上传成功", Toast.LENGTH_SHORT).show();
+								Toast.makeText(RecordActivity.this, "上传成功", Toast.LENGTH_SHORT).show();
 //								finish();
 								uploadButton.setText("上传");
 								uploadButton.setEnabled(true);
@@ -197,12 +200,13 @@ public class RecordActivity extends AppCompatActivity implements SurfaceHolder.C
 							public void onFailure(Call<PostVideoResponse> call, Throwable throwable) {
 								Log.d(TAG, "onFailure: ");
 								
-								Toast.makeText(RecordActivity.this, throwable.getMessage(), Toast.LENGTH_SHORT).show();
+//								Toast.makeText(RecordActivity.this, throwable.getMessage(), Toast.LENGTH_SHORT).show();
 //								Toast.makeText(RecordActivity.this, "上传失败", Toast.LENGTH_SHORT).show();
 								uploadButton.setText("上传");
 								uploadButton.setEnabled(true);
 								deleteButton.setEnabled(true);
 								uploadButton2.setEnabled(true);
+//								finish();
 							}
 						});
 			}
@@ -632,6 +636,12 @@ public class RecordActivity extends AppCompatActivity implements SurfaceHolder.C
 
 	private MultipartBody.Part getMultipartFromUri(String name, Uri uri) {
 		File f = new File(ResourceUtils.getRealPath(RecordActivity.this, uri));
+		RequestBody requestFile = RequestBody.create(MediaType.parse("multipart/form-data"), f);
+		return MultipartBody.Part.createFormData(name, f.getName(), requestFile);
+	}
+
+	private MultipartBody.Part getMultipartFromUri(String name, String filePath) {
+		File f = new File(filePath);
 		RequestBody requestFile = RequestBody.create(MediaType.parse("multipart/form-data"), f);
 		return MultipartBody.Part.createFormData(name, f.getName(), requestFile);
 	}

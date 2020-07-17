@@ -189,6 +189,7 @@ public class RecommendPage extends Fragment implements RefreshList, showRecommen
 //		final MediaPlayer[] mediaPlayer = new MediaPlayer[1];
 //		Log.d(TAG,"position : " + position + " 视频URL:"+data.get(position).videoUrl );
 
+		Log.d(TAG, "playVideo: 开启progressBar");
 		progressBar = itemView.findViewById(R.id.progress_bar);
 		progressBar.setVisibility(View.VISIBLE);
 
@@ -206,6 +207,7 @@ public class RecommendPage extends Fragment implements RefreshList, showRecommen
 			@Override
 			public void onPrepared(MediaPlayer mp) {
 //				FindCurrentTab findCurrentTab = (FindCurrentTab) getParentFragment();
+				Log.d(TAG, "playVideo: 关闭progressBar");
 				progressBar.setVisibility(View.GONE);
 
 				int width = mp.getVideoWidth();

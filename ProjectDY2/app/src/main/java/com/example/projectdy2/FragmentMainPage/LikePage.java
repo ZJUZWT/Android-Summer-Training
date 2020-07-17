@@ -63,7 +63,7 @@ public class LikePage extends Fragment implements showLikePage, LogoutListener {
 
 	ProgressBar progressBar;
 
-	VideoListLayoutManager myLayoutManager;
+	VideoListLayoutManager  myLayoutManager;
 
 	//登录操作的东西
 	Button buttonLogin;
@@ -206,7 +206,7 @@ public class LikePage extends Fragment implements showLikePage, LogoutListener {
 	}
 
 
-	private void playVideo(int position) {
+	private void playVideo(final int position) {
 		isPressed = false;
 		final Uri videoLink;
 //		int random = position;
@@ -218,13 +218,14 @@ public class LikePage extends Fragment implements showLikePage, LogoutListener {
 //		View itemView = recyclerView.getChildAt(position);
 		View itemView = recyclerView.getLayoutManager().findViewByPosition(position);
 		final VideoView videoView = itemView.findViewById(R.id.mainPageVideoView);
+		Log.d(TAG, "playVideo: 开启progressBar" + position);
 //		final ImageView imgPlay = itemView.findViewById(R.id.img_play);
 //		final ImageView imgThumb = itemView.findViewById(R.id.img_thumb);
 //		final RelativeLayout rootView = itemView.findViewById(R.id.);
 //		final MediaPlayer[] mediaPlayer = new MediaPlayer[1];
 //		Log.d(TAG,"position : " + position + " 视频URL:"+data.get(position).videoUrl );
 
-		progressBar = itemView.findViewById(R.id.progress_bar);
+		progressBar = itemView.findViewById(R.id.progress_bar2);
 		progressBar.setVisibility(View.VISIBLE);
 
 		videoView.setVideoURI(videoLink);
@@ -241,6 +242,7 @@ public class LikePage extends Fragment implements showLikePage, LogoutListener {
 			@Override
 			public void onPrepared(MediaPlayer mp) {
 //				FindCurrentTab findCurrentTab = (FindCurrentTab) getParentFragment();
+				Log.d(TAG, "playVideo: 关闭progressBar" + position);
 				progressBar.setVisibility(View.GONE);
 
 				int width = mp.getVideoWidth();
@@ -303,7 +305,9 @@ public class LikePage extends Fragment implements showLikePage, LogoutListener {
 							}
 						});
 					} else {
-						List<FavorRelation> test2 = query.favor(test.get(0).getId());
+						final List<FavorRelation> test2 = query.favor(test.get(0).getId());
+
+
 						if (test2.size() == 0)
 							getActivity().runOnUiThread(new Runnable() {
 								@Override
@@ -311,6 +315,10 @@ public class LikePage extends Fragment implements showLikePage, LogoutListener {
 									layoutLogin.setVisibility(View.GONE);
 									recyclerView.setVisibility(View.GONE);
 									noLikeVideo.setVisibility(View.VISIBLE);
+									data = test2 ;
+									adapter.setData(data);
+
+									adapter.notifyItemChanged(0,data.size());
 								}
 							});
 						else {

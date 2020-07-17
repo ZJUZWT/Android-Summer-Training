@@ -58,7 +58,7 @@ import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
 public class RecommendPage extends Fragment implements RefreshList, showRecommendPage {
-	boolean isFocus;
+	boolean isFocus = false;
 	int nowPosition;
 
 	boolean isPressed = false;
@@ -113,7 +113,6 @@ public class RecommendPage extends Fragment implements RefreshList, showRecommen
 
 					adapter.notifyDataSetChanged();
 					recyclerView.scrollToPosition(0);
-					isFocus = false;
 					nowPosition = 0 ;
 //					adapter.notifyItemChanged(0,data.size());
 				}
@@ -382,7 +381,9 @@ public class RecommendPage extends Fragment implements RefreshList, showRecommen
 
 	@Override
 	public void refresh() {
+		isFocus=true;
 		initVideo();
+//		showRecommendPage();
 	}
 
 	@Override

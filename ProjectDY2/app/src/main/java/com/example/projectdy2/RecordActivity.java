@@ -14,6 +14,7 @@ import android.media.MediaPlayer;
 import android.media.MediaRecorder;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.CountDownTimer;
 import android.os.Environment;
 import android.os.Handler;
 import android.util.Log;
@@ -100,6 +101,29 @@ public class RecordActivity extends AppCompatActivity implements SurfaceHolder.C
 			.addConverterFactory(GsonConverterFactory.create())
 			.build();
 	private IMiniDouyinService miniDouyinService = retrofit.create(IMiniDouyinService.class);
+
+	private TextView clock ;
+
+	private CountDownTimer timer = new CountDownTimer(15 * 1000, 1000) {
+		/**
+		 * 固定间隔被调用,就是每隔countDownInterval会回调一次方法onTick
+		 * @param millisUntilFinished
+		 */
+		@Override
+		public void onTick(long millisUntilFinished) {
+			clock.setText(formatTime(millisUntilFinished));
+		}
+
+
+		/**
+		 * 倒计时完成时被调用
+		 */
+		@Override
+		public void onFinish() {
+			clock.setText("00:00");
+			record();
+		}
+	};
 
 	String TAG = "相机";
 
@@ -313,6 +337,8 @@ public class RecordActivity extends AppCompatActivity implements SurfaceHolder.C
 				switchCamera();
 			}
 		});
+
+		clock = findViewById(R.id.clock);
 	}
 
 	private void initCamera(int id) {
@@ -378,12 +404,14 @@ public class RecordActivity extends AppCompatActivity implements SurfaceHolder.C
 //			videoView.stopPlayback();
 //			videoView.re
 //			videoView.setVideoPath("");
+			clock.setVisibility(View.GONE);
 			deleteButton.setVisibility(View.VISIBLE);
 			uploadButton.setVisibility(View.VISIBLE);
 			uploadButton2.setVisibility(View.VISIBLE);
 			videoView.setVisibility(View.VISIBLE);
 			videoView.setVideoPath(mp4Path);
 //			Log.d(TAG, "record: "+mp4Path);
+//			recordButton
 			videoView.start();
 		} else {
 			if ( prepareVideoRecorder() ) {
@@ -419,6 +447,8 @@ public class RecordActivity extends AppCompatActivity implements SurfaceHolder.C
 									public void run() {
 										recordButton.playAnimation();
 										contentViewGroup.removeView(tv);
+										clock.setVisibility(View.VISIBLE);
+										timer.start();
 									}
 								});
 							} catch (InterruptedException e) {
@@ -430,6 +460,9 @@ public class RecordActivity extends AppCompatActivity implements SurfaceHolder.C
 				else {
 					mMediaRecorder.start();
 					recordButton.playAnimation();
+					clock.setVisibility(View.VISIBLE);
+					Log.d(TAG, "record: 已经打开clock");
+					timer.start();
 				}
 			}
 		}
@@ -438,6 +471,9 @@ public class RecordActivity extends AppCompatActivity implements SurfaceHolder.C
 	}
 	public void record() {
 		if ( isRecording ) {
+			recordButton.pauseAnimation();
+			recordButton.setProgress(0);
+
 			mMediaRecorder.stop();
 			mMediaRecorder.reset();
 			mMediaRecorder.release();
@@ -446,6 +482,8 @@ public class RecordActivity extends AppCompatActivity implements SurfaceHolder.C
 //			videoView.stopPlayback();
 //			videoView.re
 //			videoView.setVideoPath("");
+			clock.setVisibility(View.GONE);
+			uploadButton2.setVisibility(View.VISIBLE);
 			deleteButton.setVisibility(View.VISIBLE);
 			uploadButton.setVisibility(View.VISIBLE);
 			videoView.setVisibility(View.VISIBLE);
@@ -644,6 +682,26 @@ public class RecordActivity extends AppCompatActivity implements SurfaceHolder.C
 		File f = new File(filePath);
 		RequestBody requestFile = RequestBody.create(MediaType.parse("multipart/form-data"), f);
 		return MultipartBody.Part.createFormData(name, f.getName(), requestFile);
+	}
+
+	public String formatTime(long millisecond) {
+		int minute;//分钟
+		int second;//秒数
+		minute = (int) ((millisecond / 1000) / 60);
+		second = (int) ((millisecond / 1000) % 60);
+		if (minute < 10) {
+			if (second < 10) {
+				return "0" + minute + ":" + "0" + second;
+			} else {
+				return "0" + minute + ":" + second;
+			}
+		}else {
+			if (second < 10) {
+				return minute + ":" + "0" + second;
+			} else {
+				return minute + ":" + second;
+			}
+		}
 	}
 
 }

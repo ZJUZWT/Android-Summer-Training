@@ -59,7 +59,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 
 public class RecordActivity extends AppCompatActivity implements SurfaceHolder.Callback {
-	private boolean isPic = true;
+//	private boolean isPic = true;
 
 	private boolean isRecording = false;
 	private int flashMode = 0;//0:关闭 1:打开 2:AUTO
@@ -146,11 +146,11 @@ public class RecordActivity extends AppCompatActivity implements SurfaceHolder.C
 		uploadButton2.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				if ( isPic )
+//				if ( isPic )
 					chooseImage();
-				else
-					chooseVideo();
-				isPic = !isPic;
+//				else
+//					chooseVideo();
+//				isPic = !isPic;
 			}
 		});
 		uploadButton.setOnClickListener(new View.OnClickListener() {
@@ -160,7 +160,7 @@ public class RecordActivity extends AppCompatActivity implements SurfaceHolder.C
 //				File file = new File(mp4Path);
 //				file.
 
-//				Uri videoURI = Uri.fromFile(new File(mp4Path));
+				videoURI = Uri.fromFile(new File(mp4Path));
 
 				if ( imageURI == null ) {
 					Toast.makeText(RecordActivity.this,"请先选择封面",Toast.LENGTH_SHORT).show();
@@ -173,11 +173,14 @@ public class RecordActivity extends AppCompatActivity implements SurfaceHolder.C
 				uploadButton.setEnabled(false);
 				deleteButton.setEnabled(false);
 				uploadButton2.setEnabled(false);
+				Log.d(TAG, "onClick: 执行到上传");
 
 				miniDouyinService.postVideo("18973100927", "张文韬", coverImagePart, videoPart).enqueue(
 						new Callback<PostVideoResponse>() {
 							@Override
 							public void onResponse(Call<PostVideoResponse> call, Response<PostVideoResponse> response) {
+								Log.d(TAG, "onResponse: onResponse");
+								
 								if (response.body() != null) {
 									Toast.makeText(RecordActivity.this, response.body().toString(), Toast.LENGTH_SHORT)
 											.show();
@@ -192,6 +195,8 @@ public class RecordActivity extends AppCompatActivity implements SurfaceHolder.C
 
 							@Override
 							public void onFailure(Call<PostVideoResponse> call, Throwable throwable) {
+								Log.d(TAG, "onFailure: ");
+								
 								Toast.makeText(RecordActivity.this, throwable.getMessage(), Toast.LENGTH_SHORT).show();
 //								Toast.makeText(RecordActivity.this, "上传失败", Toast.LENGTH_SHORT).show();
 								uploadButton.setText("上传");
